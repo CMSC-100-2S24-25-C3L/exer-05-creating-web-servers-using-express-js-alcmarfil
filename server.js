@@ -85,9 +85,52 @@ app.get('/find-by-isbn-author', (req, res) => {
         if (matchingBooks){
             return res.send({matchingBooks});
         } else {
-            return res.send({success: false, message: "no matching books"});
+            return res.send({success: false, message: "no matching book"});
         }
     });
+});
+
+
+app.get('/find-by-author', (req,res) => {
+    const {author} = req.query;
+
+    if (!author){
+        return res.send({ success: false });
+    }
+
+    let matchingBooks = [];
+
+
+    fs.readFile("books.txt", 'utf8', (err, data) => {
+        if (err && err.code !== 'ENOENT') {
+            return res.send({ success: false });
+        }
+
+        if(data){
+            const splitData = data.split('\n');
+            for (let line of splitData){
+                const info = line.split(',');
+                const bookAuthor = info[2];
+
+                if (bookAuthor === author) {
+                    matchingBooks.push({
+                        bookName: info[0],
+                        ISBN: info[1],
+                        author: bookAuthor,
+                        yearPublished: info[3]
+                    });
+                }
+            }
+        }
+
+        if (matchingBooks.length > 0){
+            return res.send({ matchingBooks });
+        } else {
+            return res.send({ message : "no matching books"});
+        }
+       
+    })
+
 });
 
 
