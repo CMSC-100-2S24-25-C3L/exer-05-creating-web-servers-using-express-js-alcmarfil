@@ -1,1 +1,2 @@
-Harry Potter and the Philosopher's Stone,978-0-7475-3269-9,J.K Rowling,1997
+Harry Potter and the Philosopher's Stone,978-0-7475-3269-9,J.K Rowwling,1997
+Harry Potter and the Philosopher's Stone 2,978-0-7475-3270-9,J.K Rowwling,1999
