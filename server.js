@@ -6,7 +6,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.post('/add-book', (req,res) => {
 
-    console.log ("Testing received body:", req.body);
+    // console.log ("Testing received body:", req.body);
 
     const {bookName, ISBN, author, yearPublished} = req.body;
 
@@ -48,7 +48,47 @@ app.post('/add-book', (req,res) => {
 }
 );
 
+app.get('/find-by-isbn-author', (req, res) => {
+    console.log("test query", req.query);
+    const {isbn, author} = req.query;
 
+    if (!isbn || !author){
+        return res.send({ success: false, message: "no data" });
+    }
+    let matchingBooks = null; 
+
+    fs.readFile("books.txt", 'utf8', (err, data) => {
+        if (err && err.code !== 'ENOENT') {
+            return res.send({ success: false });
+        }
+
+        if(data){
+            const splitData = data.split('\n');
+            for (let line of splitData){
+                const info = line.split(',');
+                const bookISBN = info[1];
+                const authorName = info[2];
+                console.log(authorName, bookISBN);
+
+                if(author.toLowerCase() === authorName.toLowerCase() && bookISBN === isbn){
+                    matchingBooks =  {
+                        bookName : info[0],
+                        ISBN : bookISBN,
+                        authorName : authorName,
+                        yearPublished : info[3]
+                    }; 
+                    break;
+                }
+            }
+        }
+
+        if (matchingBooks){
+            return res.send({matchingBooks});
+        } else {
+            return res.send({success: false, message: "no matching books"});
+        }
+    });
+});
 
 
 app.get('/', (req, res) => {
